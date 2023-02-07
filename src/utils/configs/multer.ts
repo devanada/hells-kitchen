@@ -1,15 +1,17 @@
+import { v2 as cloudinary } from "cloudinary";
+import { Request } from "express";
+import multer from "multer";
+
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const { v2 } = require("cloudinary");
-const multer = require("multer");
 
 const storage = new CloudinaryStorage({
-  cloudinary: v2,
+  cloudinary: cloudinary,
   params: {
     folder: "DEV",
   },
 });
 
-const fileFilter = (req, file, cb) => {
+const fileFilter = (req: Request, file: Express.Multer.File, cb: any) => {
   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
     cb(null, true);
   } else {
@@ -23,4 +25,4 @@ const upload = multer({
   fileFilter,
 });
 
-module.exports = upload;
+export default upload;

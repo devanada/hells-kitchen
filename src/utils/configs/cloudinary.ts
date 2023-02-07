@@ -1,18 +1,17 @@
-// import { v2 as cloudinary } from "cloudinary";
-const { v2 } = require("cloudinary");
+import { v2 as cloudinary } from "cloudinary";
 
-v2.config({
+cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-module.exports.uploads = (file, folder) => {
+module.exports.uploads = (file: any, folder: any) => {
   return new Promise((resolve, reject) => {
-    v2.uploader.upload(
+    cloudinary.uploader.upload(
       file,
       { resource_type: "auto", folder },
-      (error, result) => {
+      (error: any, result: any) => {
         if (error) {
           reject({ status: "error", message: error.message });
         } else {

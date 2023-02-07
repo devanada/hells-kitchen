@@ -1,7 +1,9 @@
-const express = require("express");
-const cors = require("cors");
+import { Request, Response, NextFunction } from "express";
+import express from "express";
+import cors from "cors";
 
-const usersRouter = require("../users/users.routes");
+import usersRouter from "../users/users.routes";
+import authRouter from "../auth/auth.router";
 
 const app = express();
 var corsOptions = {
@@ -13,13 +15,14 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/api/v1", authRouter);
 app.use("/api/v1", usersRouter);
 
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   return res.status(404).json({
     code: 404,
     message: "No such route exists",
   });
 });
 
-module.exports = app;
+export default app;
