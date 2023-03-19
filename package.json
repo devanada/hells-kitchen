@@ -26,6 +26,7 @@
     "mysql2": "^2.3.3",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
+    "reflect-metadata": "^0.1.13",
     "sequelize": "^6.28.0",
     "sequelize-typescript": "^2.1.5"
   },
