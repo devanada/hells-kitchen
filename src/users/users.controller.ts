@@ -1,10 +1,29 @@
 import { Request, Response } from "express";
 
-import { getUserByPK, updateUserByPK, deleteUserByPK } from "./users.model";
+import {
+  getUserByUname,
+  updateUserByUname,
+  deleteUserByUname,
+  getListUsers,
+} from "./users.model";
+
+export const listUsers = async (req: Request, res: Response) => {
+  try {
+    const data = await getListUsers();
+    if (data) {
+      return res.status(200).json({ message: "Data found", data });
+    } else {
+      return res.status(404).json({ message: "No data found" });
+    }
+  } catch (err: any) {
+    return res.status(500).json({ message: err.message });
+  }
+};
 
 export const userGet = async (req: Request, res: Response) => {
   try {
-    const data = await getUserByPK(req);
+    const { username } = req.params;
+    const data = await getUserByUname(username);
     if (data) {
       return res.status(200).json({ message: "User found", data });
     } else {
@@ -17,7 +36,7 @@ export const userGet = async (req: Request, res: Response) => {
 
 export const userUpdate = async (req: Request, res: Response) => {
   try {
-    const data = await updateUserByPK(req);
+    const data = await updateUserByUname(req);
     if (data) {
       return res.status(200).json({
         message: "User updated successfully",
@@ -34,7 +53,7 @@ export const userUpdate = async (req: Request, res: Response) => {
 
 export const userDelete = async (req: Request, res: Response) => {
   try {
-    const data = await deleteUserByPK(req);
+    const data = await deleteUserByUname(req);
     if (data) {
       return res.status(200).json({ message: "User deleted successfully" });
     } else {

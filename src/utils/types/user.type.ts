@@ -5,7 +5,7 @@ declare module "express-serve-static-core" {
 }
 
 export type bodyType = {
-  email: string;
+  username: string;
   password: string;
   first_name: string;
   last_name: string;

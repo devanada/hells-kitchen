@@ -12,7 +12,7 @@ export const authTest = () => {
   describe("Feature - Register", () => {
     test("should return success response with valid body request", async () => {
       const res = await request(app).post("/api/v1/register").send({
-        email: "test@mail.com",
+        username: "testing",
         password: "test",
         first_name: "Yoga S",
         last_name: "Devanada",
@@ -23,7 +23,7 @@ export const authTest = () => {
 
     test("should return failed response when account already exist", async () => {
       const res = await request(app).post("/api/v1/register").send({
-        email: "test@mail.com",
+        username: "testing",
         password: "test",
         first_name: "Yoga S",
         last_name: "Devanada",
@@ -34,7 +34,7 @@ export const authTest = () => {
 
     test("should return failed response when some of body request is missing", async () => {
       const res = await request(app).post("/api/v1/register").send({
-        email: "test@mail.com",
+        username: "testing",
         password: "test",
         first_name: "Yoga S",
       });
@@ -46,7 +46,7 @@ export const authTest = () => {
   describe("Feature - Login", () => {
     test("should return success response with valid credential", async () => {
       const res = await request(app).post("/api/v1/login").send({
-        email: "test@mail.com",
+        username: "testing",
         password: "test",
       });
       expect(res.statusCode).toBe(200);
@@ -55,33 +55,33 @@ export const authTest = () => {
 
     test("should return failed response with invalid password", async () => {
       const res = await request(app).post("/api/v1/login").send({
-        email: "test@mail.com",
+        username: "testing",
         password: "test!",
       });
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe("Invalid password");
     });
 
-    test("should return failed response with invalid email", async () => {
+    test("should return failed response with invalid username", async () => {
       const res = await request(app).post("/api/v1/login").send({
-        email: "testabc@mail.com",
+        username: "testingabc",
         password: "test",
       });
       expect(res.statusCode).toBe(400);
-      expect(res.body.message).toBe("Invalid email");
+      expect(res.body.message).toBe("Invalid username");
     });
 
-    test("should return failed response with email is missing", async () => {
+    test("should return failed response with username is missing", async () => {
       const res = await request(app).post("/api/v1/login").send({
         password: "test",
       });
       expect(res.statusCode).toBe(400);
-      expect(res.body.message).toBe("Email is required");
+      expect(res.body.message).toBe("Username is required");
     });
 
     test("should return failed response with password is missing", async () => {
       const res = await request(app).post("/api/v1/login").send({
-        email: "test@mail.com",
+        username: "testing",
       });
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe("Password is required");

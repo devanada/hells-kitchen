@@ -15,7 +15,7 @@ export const usersTest = () => {
 
     beforeEach(async () => {
       const result = await request(app).post("/api/v1/login").send({
-        email: "test@mail.com",
+        username: "testing",
         password: "test",
       });
       token = result.body.data.token;
@@ -49,7 +49,7 @@ export const usersTest = () => {
 
     beforeEach(async () => {
       const result = await request(app).post("/api/v1/login").send({
-        email: "test@mail.com",
+        username: "testing",
         password: "test",
       });
       token = result.body.data.token;
@@ -90,7 +90,7 @@ export const usersTest = () => {
 
     beforeAll(async () => {
       const result = await request(app).post("/api/v1/login").send({
-        email: "test@mail.com",
+        username: "testing",
         password: "test",
       });
       token = result.body.data?.token;

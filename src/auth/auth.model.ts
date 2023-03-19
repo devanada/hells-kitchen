@@ -6,20 +6,20 @@ import { bodyType } from "../utils/types/user.type";
 import Users from "../users/users.model";
 
 export const regisUser = async (req: Request) => {
-  const { first_name, last_name, email, password }: bodyType = req.body;
+  const { first_name, last_name, username, password }: bodyType = req.body;
 
   const encryptedPassword = await bcrypt.hash(password, 10);
 
   const object = {
     first_name,
     last_name,
-    email: email.toLowerCase(),
+    username: username.toLowerCase(),
     password: encryptedPassword,
   };
   const user: any = await Users.create(object);
 
   const token = jsonwebtoken.sign(
-    { user_id: user.id, email },
+    { user_id: user.id, username },
     process.env.TOKEN_KEY as string,
     {
       expiresIn: "2h",
@@ -29,9 +29,9 @@ export const regisUser = async (req: Request) => {
   return user;
 };
 
-export const loginUser = async (data: any, email: string) => {
+export const loginUser = async (data: any, username: string) => {
   const token = jsonwebtoken.sign(
-    { user_id: data.id, email },
+    { user_id: data.id, username },
     process.env.TOKEN_KEY as string,
     {
       expiresIn: "2h",
@@ -41,10 +41,8 @@ export const loginUser = async (data: any, email: string) => {
   return token;
 };
 
-export const getUserByEmail = async (req: Request) => {
-  const { email }: bodyType = req.body;
-
-  const user = await Users.findOne({ where: { email } });
+export const getUserByUname = async (username: string) => {
+  const user = await Users.findOne({ where: { username, deletedAt: null } });
 
   return user;
 };

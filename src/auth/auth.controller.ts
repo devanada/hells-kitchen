@@ -2,17 +2,17 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
 import { bodyType } from "../utils/types/user.type";
-import { loginUser, regisUser, getUserByEmail } from "./auth.model";
+import { loginUser, regisUser, getUserByUname } from "./auth.model";
 
 export const userSignup = async (req: Request, res: Response) => {
   try {
-    const { first_name, last_name, email, password }: bodyType = req.body;
+    const { first_name, last_name, username, password }: bodyType = req.body;
 
-    if (!(email && password && first_name && last_name)) {
+    if (!(username && password && first_name && last_name)) {
       return res.status(400).json({ message: "All input is required" });
     }
 
-    const oldUser = await getUserByEmail(req);
+    const oldUser = await getUserByUname(username);
 
     if (oldUser) {
       return res
@@ -24,38 +24,41 @@ export const userSignup = async (req: Request, res: Response) => {
 
     return res.status(201).json({ message: "User registered", data });
   } catch (err: any) {
-    const errors = err.errors.map((val: any) => {
-      return { message: val.message, path: val.path };
-    });
-    return res.status(500).json({ message: errors });
+    return res.status(500).json({ message: err.message });
   }
 };
 
 export const userLogin = async (req: Request, res: Response) => {
   try {
-    const { email, password }: bodyType = req.body;
+    const { username, password }: bodyType = req.body;
 
-    if (!email && !password) {
+    if (!username && !password) {
       return res.status(400).json({ message: "All input is required" });
-    } else if (!email && password) {
-      return res.status(400).json({ message: "Email is required" });
-    } else if (email && !password) {
+    } else if (!username && password) {
+      return res.status(400).json({ message: "Username is required" });
+    } else if (username && !password) {
       return res.status(400).json({ message: "Password is required" });
     }
 
-    const user: any = await getUserByEmail(req);
+    const user = await getUserByUname(username);
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const data = await loginUser(user, email);
+    if (user) {
+      const comparePass = await bcrypt.compare(
+        password,
+        user.getDataValue("password")
+      );
+      if (comparePass) {
+        const data = await loginUser(user, username);
 
-      return res.status(200).json({
-        message: "Login successfully",
-        data: { token: data },
-      });
-    } else if (user && !(await bcrypt.compare(password, user.password))) {
-      return res.status(400).json({ message: "Invalid password" });
+        return res.status(200).json({
+          message: "Login successfully",
+          data: { token: data },
+        });
+      } else if (!comparePass) {
+        return res.status(400).json({ message: "Invalid password" });
+      }
     }
-    return res.status(400).json({ message: "Invalid email" });
+    return res.status(400).json({ message: "Invalid username" });
   } catch (err: any) {
     return res.status(500).json({ message: err.message });
   }

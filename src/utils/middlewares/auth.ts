@@ -8,7 +8,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
   if (!token) {
     return res.status(400).json({
-      message: "A token is required for authentication",
+      message: "Unauthorized, a token is required for authentication",
     });
   }
 
@@ -18,7 +18,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const decoded: any = jwt.verify(bearerToken, config.TOKEN_KEY as string);
     req.token = decoded;
   } catch (err: any) {
-    return res.status(401).json({ message: "Invalid Token" });
+    return res.status(401).json({ message: "Unauthorized, invalid Token" });
   }
 
   return next();

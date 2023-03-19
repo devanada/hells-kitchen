@@ -16,12 +16,13 @@ const Users = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: null,
     },
-    email: {
+    username: {
       type: DataTypes.STRING,
-      unique: true,
+      allowNull: false,
     },
     password: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     image: {
       type: DataTypes.STRING,
@@ -44,21 +45,39 @@ sequelize
     console.error("Unable to create table:", error);
   });
 
-export const getUserByPK = async (req: Request) => {
-  const { user_id } = req.token;
-  const user = await Users.findByPk(user_id);
+export const getListUsers = async () => {
+  const user = await Users.findAll({
+    where: { deletedAt: null },
+    attributes: {
+      exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
+    },
+  });
   return user;
 };
 
-export const updateUserByPK = async (req: Request) => {
-  const { user_id } = req.token;
-  const { email, password } = req.body;
+export const getUserByUname = async (username: string) => {
+  const user = await Users.findOne({
+    where: { username, deletedAt: null },
+    attributes: {
+      exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
+    },
+  });
+  return user;
+};
+
+export const updateUserByUname = async (req: Request) => {
+  const { username: uname } = req.params;
+  const { username, password } = req.body;
+
+  const checkIfExist = await getUserByUname(uname);
+  if (!checkIfExist) return null;
+
   let encryptedPassword = "";
   if (password) encryptedPassword = await bcrypt.hash(password, 10);
   let temp: typeof req.body = {};
   for (const key in req.body) {
     if (key === "password") temp[key] = encryptedPassword;
-    else if (key === "email") temp[key] = email.toLowerCase();
+    else if (key === "username") temp[key] = username.toLowerCase();
     else temp[key] = req.body[key];
   }
   // temp.updatedAt = new Date();
@@ -72,13 +91,14 @@ export const updateUserByPK = async (req: Request) => {
 
   const user = await Users.update(temp, {
     where: {
-      id: user_id,
+      username: uname,
+      deletedAt: null,
     },
   });
   return user;
 };
 
-export const deleteUserByPK = async (req: Request) => {
+export const deleteUserByUname = async (req: Request) => {
   const { user_id } = req.token;
 
   const user = await Users.destroy({
