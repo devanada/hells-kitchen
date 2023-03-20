@@ -1,0 +1,365 @@
+openapi: "3.0.2"
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/devanada/hells-kitchen/1.0.0
+info:
+  description: Hells Kitchen is a CRUD app I usually used to give an example how to implement authentication (login & register) and JWT
+  version: "1.0.0"
+  title: Hells Kitchen
+  contact:
+    email: devanada@alterra.id
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+tags:
+  - name: Authentication
+    description: Used to login or register an account
+  - name: Users
+    description: Used to manage user profile, from get, update, or delete an account, and to get all users
+paths:
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Login using email and password
+      operationId: userLogin
+      description: This endpoint is used to login into the system using email and password, and return a response with JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "200":
+          description: Login successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "Login successfully"
+                data:
+                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6InRlc3RAbWFpbC5jb20iLCJpYXQiOjE2NzUzMzgzNTcsImV4cCI6MTY3NTM0NTU1N30.4qgfpiW-AJ63kBSvtxsjhwEKnsBL-bVFQzxwi8lyb8s"
+        "400":
+          description: "Invalid input, whether input is missing or user accidentally write a wrong credential"
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "Invalid email"
+        "500":
+          $ref: "#/components/responses/500"
+  /register:
+    post:
+      tags:
+        - Authentication
+      summary: Register/create an account
+      operationId: userRegister
+      description: This endpoint is used to create an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/User"
+            example:
+              email: "test@mail.com"
+              password: "test"
+              first_name: "First"
+              last_name: "Last"
+      responses:
+        "200":
+          description: Register successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "User registered"
+                data:
+                  image: "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+                  id: 1,
+                  first_name: "First"
+                  last_name: "Last"
+                  email: "test@mail.com"
+                  password: "@aiusjhdiuahiduhasidaxdzsad$"
+                  updatedAt: "2023-02-02T12:06:21.849Z"
+                  createdAt: "2023-02-02T12:06:21.849Z"
+        "400":
+          description: "When some input is missing"
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "All input is required"
+        "409":
+          description: "When user write an email that already used"
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "User already exist, please login"
+        "500":
+          $ref: "#/components/responses/500"
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      operationId: usersGet
+      description: This endpoint is used to get all users
+      responses:
+        "200":
+          description: When JWT is valid, it return with user's data
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "Data found"
+                data:
+                  - id: 1
+                    first_name: "First"
+                    last_name: "Last"
+                    username: "testing"
+                    image: "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+                  - id: 2
+                    first_name: "Second"
+                    last_name: "Last"
+                    username: "testing2"
+                    image: "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+        "404":
+          description: "When there is no users found"
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "No data found"
+        "500":
+          $ref: "#/components/responses/500"
+  /users/{username}:
+    get:
+      tags:
+        - Users
+      parameters:
+        - in: path
+          required: true
+          name: "username"
+          schema:
+            type: string
+      summary: Get user detail
+      operationId: userGet
+      description: This endpoint is used to get user detail
+      responses:
+        "200":
+          description: Return user's data when profile found and not deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "Data found"
+                data:
+                  id: 1
+                  first_name: "First"
+                  last_name: "Last"
+                  username: "testing"
+                  image: "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+        "404":
+          description: "When there is no user found or deleted"
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "No data found"
+        "500":
+          $ref: "#/components/responses/500"
+    put:
+      tags:
+        - Users
+      parameters:
+        - in: path
+          required: true
+          name: "username"
+          schema:
+            type: string
+      summary: Update user's profile
+      operationId: profilePut
+      description: This endpoint is used to update user's information based on JWT, all request body are optional, but it requires one property
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/RequestProfile"
+      responses:
+        "200":
+          description: When JWT is valid, it return with successful message
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "User updated successfully"
+        "400":
+          description: "When there is an invalid input from user"
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "Failed to update user"
+        "500":
+          $ref: "#/components/responses/500"
+    delete:
+      tags:
+        - Users
+      parameters:
+        - in: path
+          required: true
+          name: "username"
+          schema:
+            type: string
+      summary: Delete user's profile
+      operationId: profileDelete
+      description: This endpoint is used to delete user's account based on JWT
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: When JWT is valid, it return with successful message
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "User deleted successfully"
+        "400":
+          description: "When there is an invalid input from user"
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ResponseObj"
+              example:
+                message: "Failed to delete user, user not found"
+        "500":
+          $ref: "#/components/responses/500"
+components:
+  schemas:
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    User:
+      type: object
+      required:
+        - email
+        - password
+        - first_name
+        - last_name
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          format: password
+        first_name:
+          type: string
+        last_name:
+          type: string
+    RequestProfile:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+        first_name:
+          type: string
+        last_name:
+          type: string
+        image:
+          type: string
+          format: binary
+    ResponseObj:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+  responses:
+    404:
+      description: "The requested resource was not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseObj"
+          example:
+            message: "Requested resource was not found"
+            data: null
+    500:
+      description: "There is an error on the server, the message is dynamic depend on the server error"
+      content:
+        application/json:
+          schema:
+            type: object
+            allOf:
+              - $ref: "#/components/schemas/ResponseObj"
+          example:
+            message: "Internal Server Error"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

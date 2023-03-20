@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 
 import usersRouter from "../users/users.routes";
-import authRouter from "../auth/auth.router";
+import authRouter from "../auth/auth.routes";
 
 const app = express();
 var corsOptions = {
