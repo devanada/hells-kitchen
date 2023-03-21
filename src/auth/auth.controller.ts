@@ -52,7 +52,7 @@ export const userLogin = async (req: Request, res: Response) => {
 
         return res.status(200).json({
           message: "Login successfully",
-          data: { token: data },
+          data: { username: user.getDataValue("username"), token: data },
         });
       } else if (!comparePass) {
         return res.status(400).json({ message: "Invalid password" });
