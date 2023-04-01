@@ -6,11 +6,11 @@ import upload from "../utils/configs/multer";
 
 const router = express.Router();
 
-router.get("/users", listUsers);
 router
-  .route("/users/:username")
-  .get(userGet)
+  .route("/users")
+  .get(listUsers)
   .put(verifyToken, upload.single("image"), userUpdate)
   .delete(verifyToken, userDelete);
+router.get("/users/:username", userGet);
 
 export default router;

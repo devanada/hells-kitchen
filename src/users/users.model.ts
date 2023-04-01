@@ -66,7 +66,7 @@ export const getUserByUname = async (username: string) => {
 };
 
 export const updateUserByUname = async (req: Request) => {
-  const { username: uname } = req.params;
+  const { username: uname } = req.token;
   const { username, password } = req.body;
 
   const checkIfExist = await getUserByUname(uname);
@@ -80,7 +80,6 @@ export const updateUserByUname = async (req: Request) => {
     else if (key === "username") temp[key] = username.toLowerCase();
     else temp[key] = req.body[key];
   }
-  // temp.updatedAt = new Date();
   if (req.file) {
     const { path } = req.file;
     const uploader = async (path: any) =>
