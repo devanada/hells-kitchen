@@ -69,8 +69,8 @@ export const updateUserByUname = async (req: Request) => {
   const { username: uname } = req.token;
   const { username, password } = req.body;
 
-  const checkIfExist = await getUserByUname(uname);
-  if (!checkIfExist) return null;
+  const checkIfExist = await getUserByUname(username);
+  if (checkIfExist) return null;
 
   let encryptedPassword = "";
   if (password) encryptedPassword = await bcrypt.hash(password, 10);
@@ -82,6 +82,7 @@ export const updateUserByUname = async (req: Request) => {
   }
   if (req.file) {
     const { path } = req.file;
+    // TODO: Change any to proper types
     const uploader = async (path: any) =>
       await cloudinary.uploads(path, "kitchen-sink");
     const newPath = await uploader(path);

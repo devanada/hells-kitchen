@@ -17,7 +17,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const bearerToken = bearer[1];
     const decoded: any = jwt.verify(bearerToken, config.TOKEN_KEY as string);
     req.token = decoded;
-  } catch (err: any) {
+  } catch (err) {
     return res.status(401).json({ message: "Unauthorized, invalid Token" });
   }
 

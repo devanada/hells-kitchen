@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
-import { bodyType } from "../utils/types/user.type";
+import { BodyType } from "../utils/types/user.type";
 import { loginUser, regisUser, getUserByUname } from "./auth.model";
 
 export const userSignup = async (req: Request, res: Response) => {
   try {
-    const { first_name, last_name, username, password }: bodyType = req.body;
+    const { first_name, last_name, username, password }: BodyType = req.body;
 
     if (!(username && password && first_name && last_name)) {
       return res.status(400).json({ message: "All input is required" });
@@ -20,9 +20,9 @@ export const userSignup = async (req: Request, res: Response) => {
         .json({ message: "User already exist, please login" });
     }
 
-    const data = await regisUser(req);
+    await regisUser(req);
 
-    return res.status(201).json({ message: "User registered", data });
+    return res.status(201).json({ message: "User registered, please login" });
   } catch (err: any) {
     return res.status(500).json({ message: err.message });
   }
@@ -30,7 +30,7 @@ export const userSignup = async (req: Request, res: Response) => {
 
 export const userLogin = async (req: Request, res: Response) => {
   try {
-    const { username, password }: bodyType = req.body;
+    const { username, password }: BodyType = req.body;
 
     if (!username && !password) {
       return res.status(400).json({ message: "All input is required" });

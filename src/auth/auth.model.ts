@@ -2,11 +2,11 @@ import jsonwebtoken from "jsonwebtoken";
 import { Request } from "express";
 import bcrypt from "bcryptjs";
 
-import { bodyType } from "../utils/types/user.type";
+import { BodyType } from "../utils/types/user.type";
 import Users from "../users/users.model";
 
 export const regisUser = async (req: Request) => {
-  const { first_name, last_name, username, password }: bodyType = req.body;
+  const { first_name, last_name, username, password }: BodyType = req.body;
 
   const encryptedPassword = await bcrypt.hash(password, 10);
 
@@ -16,6 +16,7 @@ export const regisUser = async (req: Request) => {
     username: username.toLowerCase(),
     password: encryptedPassword,
   };
+  // TODO: Change any to proper types
   const user: any = await Users.create(object);
 
   const token = jsonwebtoken.sign(
