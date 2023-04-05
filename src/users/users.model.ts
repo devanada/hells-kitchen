@@ -69,8 +69,10 @@ export const updateUserByUname = async (req: Request) => {
   const { username: uname } = req.token;
   const { username, password } = req.body;
 
-  const checkIfExist = await getUserByUname(username);
-  if (checkIfExist) return null;
+  if (username) {
+    const checkIfExist = await getUserByUname(username);
+    if (checkIfExist) return null;
+  }
 
   let encryptedPassword = "";
   if (password) encryptedPassword = await bcrypt.hash(password, 10);
