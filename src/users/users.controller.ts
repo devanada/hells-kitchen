@@ -44,7 +44,7 @@ export const userUpdate = async (req: Request, res: Response) => {
     } else {
       return res
         .status(400)
-        .json({ code: 400, message: "Failed to update user" });
+        .json({ message: "Failed to update user, username already exist" });
     }
   } catch (err: any) {
     return res.status(500).json({ message: err.message });
