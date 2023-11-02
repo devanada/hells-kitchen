@@ -1,4 +1,5 @@
-import { DataTypes, Model, Optional } from "sequelize";
+import { Optional } from "sequelize";
+
 declare module "express-serve-static-core" {
   interface Request {
     token: BodyType;
@@ -6,21 +7,25 @@ declare module "express-serve-static-core" {
 }
 
 export interface BodyType {
-  username: string;
+  full_name: string;
+  email: string;
   password: string;
-  first_name: string;
-  last_name: string;
-  image: string;
-  user_id?: string;
+  role: string;
+  profile_picture: string;
+  address: string;
+  phone_number: string;
+  id?: string;
 }
 
 interface User {
   id: number;
-  image: string;
-  first_name: string;
-  last_name: string;
-  username: string;
+  full_name: string;
+  email: string;
   password: string;
+  role: string;
+  profile_picture: string;
+  address: string;
+  phone_number: string;
   updatedAt?: string;
   createdAt?: string;
   deletedAt?: string;

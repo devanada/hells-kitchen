@@ -1,26 +1,25 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
-import { BodyType } from "../utils/types/user.type";
-import { loginUser, regisUser, getUserByUname } from "./auth.model";
+import { loginUser, regisUser, getUserByEmail } from "./auth.model";
+import { zParse } from "../utils/zParse";
+import { registerSchema, loginSchema } from "./auth.types";
 
 export const userSignup = async (req: Request, res: Response) => {
   try {
-    const { first_name, last_name, username, password }: BodyType = req.body;
+    const { query, body } = await zParse(registerSchema, req);
 
-    if (!(username && password && first_name && last_name)) {
-      return res.status(400).json({ message: "All input is required" });
+    if (query.overwrite) {
+      const oldUser = await getUserByEmail(body.email);
+
+      if (oldUser) {
+        return res
+          .status(409)
+          .json({ message: "User already exist, please login" });
+      }
+
+      await regisUser(body);
     }
-
-    const oldUser = await getUserByUname(username);
-
-    if (oldUser) {
-      return res
-        .status(409)
-        .json({ message: "User already exist, please login" });
-    }
-
-    await regisUser(req);
 
     return res.status(201).json({ message: "User registered, please login" });
   } catch (err: any) {
@@ -30,35 +29,31 @@ export const userSignup = async (req: Request, res: Response) => {
 
 export const userLogin = async (req: Request, res: Response) => {
   try {
-    const { username, password }: BodyType = req.body;
+    const { body } = await zParse(loginSchema, req);
 
-    if (!username && !password) {
-      return res.status(400).json({ message: "All input is required" });
-    } else if (!username && password) {
-      return res.status(400).json({ message: "Username is required" });
-    } else if (username && !password) {
-      return res.status(400).json({ message: "Password is required" });
-    }
-
-    const user = await getUserByUname(username);
+    const user = await getUserByEmail(body.email);
 
     if (user) {
       const comparePass = await bcrypt.compare(
-        password,
+        body.password,
         user.getDataValue("password")
       );
+
       if (comparePass) {
-        const data = await loginUser(user, username);
+        const data = await loginUser(user, body.email);
 
         return res.status(200).json({
           message: "Login successfully",
-          data: { username: user.getDataValue("username"), token: data },
+          payload: { token: data },
         });
       } else if (!comparePass) {
         return res.status(400).json({ message: "Invalid password" });
       }
     }
-    return res.status(400).json({ message: "Invalid username" });
+
+    return res
+      .status(400)
+      .json({ message: "User not found, you must register first" });
   } catch (err: any) {
     return res.status(500).json({ message: err.message });
   }

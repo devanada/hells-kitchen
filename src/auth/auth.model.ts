@@ -1,38 +1,28 @@
 import jsonwebtoken from "jsonwebtoken";
-import { Request } from "express";
 import bcrypt from "bcryptjs";
 
-import { BodyType } from "../utils/types/user.type";
 import Users from "../users/users.model";
+import { RegistSchema } from "./auth.types";
 
-export const regisUser = async (req: Request) => {
-  const { first_name, last_name, username, password }: BodyType = req.body;
+export const regisUser = async (body: RegistSchema) => {
+  const { email, password } = body;
 
   const encryptedPassword = await bcrypt.hash(password, 10);
 
   const object = {
-    first_name,
-    last_name,
-    username: username.toLowerCase(),
+    ...body,
+    email: email.toLowerCase(),
     password: encryptedPassword,
   };
-  // TODO: Change any to proper types
-  const user: any = await Users.create(object);
 
-  const token = jsonwebtoken.sign(
-    { user_id: user.id, username },
-    process.env.TOKEN_KEY as string,
-    {
-      expiresIn: "2h",
-    }
-  );
-  user.token = token;
+  const user = await Users.create(object);
+
   return user;
 };
 
-export const loginUser = async (data: any, username: string) => {
+export const loginUser = async (data: any, email: string) => {
   const token = jsonwebtoken.sign(
-    { user_id: data.id, username },
+    { user_id: data.id, email, role: data.role },
     process.env.TOKEN_KEY as string,
     {
       expiresIn: "2h",
@@ -42,8 +32,8 @@ export const loginUser = async (data: any, username: string) => {
   return token;
 };
 
-export const getUserByUname = async (username: string) => {
-  const user = await Users.findOne({ where: { username, deletedAt: null } });
+export const getUserByEmail = async (email: string) => {
+  const user = await Users.findOne({ where: { email } });
 
   return user;
 };
