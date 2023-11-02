@@ -17,7 +17,7 @@ sequelize
     console.log("Connection has been established successfully.");
   })
   .catch((err: any) => {
-    console.log("database connection failed. exiting now...");
+    console.error("database connection failed. exiting now...");
     console.error(err.message);
     process.exit(1);
   });

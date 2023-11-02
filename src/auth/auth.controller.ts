@@ -9,7 +9,7 @@ export const userSignup = async (req: Request, res: Response) => {
   try {
     const { query, body } = await zParse(registerSchema, req);
 
-    if (query.overwrite) {
+    if (query.overwrite === "true") {
       const oldUser = await getUserByEmail(body.email);
 
       if (oldUser) {

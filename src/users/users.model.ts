@@ -3,6 +3,7 @@ import { Request } from "express";
 import bcrypt from "bcryptjs";
 
 import sequelize from "../utils/configs/database";
+import { UserUpdateSchema } from "./users.types";
 const cloudinary = require("../utils/configs/cloudinary");
 
 const Users = sequelize.define(
@@ -53,67 +54,62 @@ sequelize
     console.error("Unable to create table:", error);
   });
 
-export const getListUsers = async () => {
-  // const user = await Users.findAll({
-  //   where: { deletedAt: null },
-  //   attributes: {
-  //     exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
-  //   },
-  // });
-  // return user;
+export const getUserByIdToken = async (req: Request) => {
+  const { user_id } = req.token;
+  const user = await Users.findOne({
+    where: { id: user_id, deletedAt: null },
+    attributes: {
+      exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
+    },
+  });
+  return user;
 };
 
-export const getUserByUname = async (req: Request) => {
-  // const { id } = req.token;
-  // const user = await Users.findOne({
-  //   where: { id, deletedAt: null },
-  //   attributes: {
-  //     exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
-  //   },
-  // });
-  // return user;
+export const updateUserByIdToken = async (
+  req: Request,
+  body: UserUpdateSchema
+) => {
+  const { user_id } = req.token;
+
+  const encryptedPassword = await bcrypt.hash(body.password, 10);
+
+  let newBody: UserUpdateSchema = {
+    ...body,
+    email: body.email.toLowerCase(),
+    password: encryptedPassword,
+  };
+
+  if (req.file) {
+    const { path } = req.file;
+
+    // TODO: Change any to proper types
+    const uploader = async (path: any) =>
+      await cloudinary.uploads(path, "kitchen-sink");
+    const newPath = await uploader(path);
+
+    newBody.profile_picture = newPath.url;
+  }
+
+  const user = await Users.update(newBody, {
+    where: {
+      id: user_id,
+      deletedAt: null,
+    },
+  });
+
+  return user;
 };
 
-export const updateUserByUname = async (req: Request) => {
-  // const { email: uname } = req.token;
-  // const { username, password } = req.body;
-  // if (username) {
-  //   const checkIfExist = await getUserByUname(username);
-  //   if (checkIfExist) return null;
-  // }
-  // let encryptedPassword = "";
-  // if (password) encryptedPassword = await bcrypt.hash(password, 10);
-  // let temp: typeof req.body = {};
-  // for (const key in req.body) {
-  //   if (key === "password") temp[key] = encryptedPassword;
-  //   else if (key === "username") temp[key] = username.toLowerCase();
-  //   else temp[key] = req.body[key];
-  // }
-  // if (req.file) {
-  //   const { path } = req.file;
-  //   // TODO: Change any to proper types
-  //   const uploader = async (path: any) =>
-  //     await cloudinary.uploads(path, "kitchen-sink");
-  //   const newPath = await uploader(path);
-  //   temp.image = newPath.url;
-  // }
-  // const user = await Users.update(temp, {
-  //   where: {
-  //     username: uname,
-  //     deletedAt: null,
-  //   },
-  // });
-  // return user;
-};
+export const deleteUserByIdToken = async (req: Request) => {
+  const { user_id } = req.token;
 
-export const deleteUserByUname = async (req: Request) => {
-  // const { id } = req.token;
-  // const user = await Users.destroy({
-  //   where: {
-  //     id: id,
-  //   },
-  // });
-  // return user;
+  const user = await Users.destroy({
+    where: {
+      id: user_id,
+    },
+  });
+
+  return user;
 };
 
 export default Users;
