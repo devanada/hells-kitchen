@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from "express";
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 
-import usersRouter from "../users/users.routes";
 import authRouter from "../auth/auth.routes";
+import usersRouter from "../users/users.routes";
+import booksRouter from "../books/books.routes";
 
 const app = express();
-var corsOptions = {
+const corsOptions = {
   origin: "*",
   methods: ["GET", "POST", "DELETE", "PUT"],
 };
@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1", authRouter);
 app.use("/api/v1", usersRouter);
+app.use("/api/v1", booksRouter);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   return res.status(404).json({

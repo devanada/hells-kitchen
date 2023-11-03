@@ -1,7 +1,7 @@
 import express from "express";
 
 import { userGet, userUpdate, userDelete } from "./users.controller";
-import verifyToken from "../utils/middlewares/auth";
+import { verifyToken } from "../utils/middlewares/auth";
 import upload from "../utils/configs/multer";
 
 const router = express.Router();

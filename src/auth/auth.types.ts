@@ -1,5 +1,6 @@
-import { querySchema } from "../utils/types/type";
 import { z } from "zod";
+
+import { querySchema } from "../utils/types/type";
 
 export const bodyLogin = z.object({
   email: z

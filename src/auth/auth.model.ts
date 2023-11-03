@@ -32,8 +32,8 @@ export const loginUser = async (data: any, email: string) => {
   return token;
 };
 
-export const getUserByEmail = async (email: string) => {
-  const user = await Users.findOne({ where: { email } });
+export const getUserByEmail = async (email: string, paranoid: boolean) => {
+  const user = await Users.findOne({ where: { email }, paranoid: paranoid });
 
   return user;
 };

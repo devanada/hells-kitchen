@@ -7,7 +7,7 @@ declare module "express-serve-static-core" {
   interface Request {
     token: {
       user_id: number;
-      role: string;
+      role: "user" | "admin";
     };
   }
 }

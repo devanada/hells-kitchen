@@ -28,7 +28,7 @@ const Users = sequelize.define(
     profile_picture: {
       type: DataTypes.STRING,
       defaultValue:
-        "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+        "https://res.cloudinary.com/hypeotesa/image/upload/v1698932147/kitchen-sink/yacw1yf1a7hdbh4ucx8u.png",
     },
     address: {
       type: DataTypes.STRING,
