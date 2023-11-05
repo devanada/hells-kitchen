@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 
 import sequelize from "../utils/configs/database";
 import { UserUpdateSchema } from "./users.types";
+import Borrows from "../borrows/borrows.model";
 const cloudinary = require("../utils/configs/cloudinary");
 
 const Users = sequelize.define(
@@ -26,7 +27,7 @@ const Users = sequelize.define(
       allowNull: false,
     },
     profile_picture: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       defaultValue:
         "https://res.cloudinary.com/hypeotesa/image/upload/v1698932147/kitchen-sink/yacw1yf1a7hdbh4ucx8u.png",
     },
@@ -44,6 +45,8 @@ const Users = sequelize.define(
     timestamps: true,
   }
 );
+
+// Users.hasMany(Borrows);
 
 sequelize
   .sync()

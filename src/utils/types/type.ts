@@ -9,6 +9,17 @@ export const querySchema = z.object({
   limit: z.string().optional().default("10"),
 });
 
+export const nonBodySchema = z.object({
+  query: querySchema,
+});
+
+export function bodySchema<T extends z.ZodRawShape>(schema: z.ZodObject<T>) {
+  return z.object({
+    query: querySchema,
+    body: schema,
+  });
+}
+
 export type QuerySchema = z.infer<typeof querySchema>;
 
 export const categories = [

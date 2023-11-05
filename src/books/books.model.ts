@@ -63,6 +63,8 @@ export const getBooks = async (req: QuerySchema) => {
 
   if (req.sort === "New") {
     order.push(["createdAt", "DESC"]);
+  } else {
+    order.push(["id", "ASC"]);
   }
 
   const { limit, offset } = getPagination(+req.page, +req.limit);
