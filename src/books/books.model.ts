@@ -1,9 +1,9 @@
-import { DataTypes, Op, Order } from "sequelize";
+import { DataTypes, Op, Order, WhereOptions } from "sequelize";
 import { Request } from "express";
 
 import sequelize from "../utils/configs/database";
 import { QuerySchema, categories } from "../utils/types/type";
-import { BodyBookSchema } from "./books.types";
+import { BookSchema } from "./books.types";
 import { getPagination, getPagingData } from "../utils/formatter/api";
 const cloudinary = require("../utils/configs/cloudinary");
 
@@ -57,20 +57,27 @@ sequelize
 
 export const getBooks = async (req: QuerySchema) => {
   let order: Order = [];
-  const condition = req.query
-    ? { title: { [Op.iLike]: `%${req.query}%` } }
-    : undefined;
+  let where: WhereOptions<any> = {};
 
-  if (req.sort === "New") {
+  if (req.query) {
+    where = { ...where, title: { [Op.iLike]: `%${req.query}%` } };
+  }
+
+  if (req.sort === "new") {
     order.push(["createdAt", "DESC"]);
   } else {
     order.push(["id", "ASC"]);
   }
 
+  if (req.filter === "featured") {
+    order.push(sequelize.random());
+    where = { ...where, featured: true };
+  }
+
   const { limit, offset } = getPagination(+req.page, +req.limit);
 
   const response = await Books.findAndCountAll({
-    where: condition,
+    where,
     order,
     limit,
     offset,
@@ -91,8 +98,8 @@ export const getBookById = async (id: string) => {
   return user;
 };
 
-export const postBook = async (req: Request, body: BodyBookSchema) => {
-  let newBody: BodyBookSchema = {
+export const postBook = async (req: Request, body: BookSchema) => {
+  let newBody: BookSchema = {
     ...body,
   };
 
@@ -112,10 +119,10 @@ export const postBook = async (req: Request, body: BodyBookSchema) => {
   return book;
 };
 
-export const updateBookById = async (req: Request, body: BodyBookSchema) => {
+export const updateBookById = async (req: Request, body: BookSchema) => {
   const { user_id } = req.token;
 
-  let newBody: BodyBookSchema = {
+  let newBody: BookSchema = {
     ...body,
   };
 

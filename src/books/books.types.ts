@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { categories, querySchema } from "../utils/types/type";
+import { categories } from "../utils/types/type";
 
-export const bodyBook = z.object({
+export const bookSchema = z.object({
   title: z.string({
     required_error: "Title is required",
   }),
@@ -20,13 +20,4 @@ export const bodyBook = z.object({
   cover_image: z.string().optional(),
 });
 
-export const bookRequest = z.object({
-  query: querySchema,
-});
-
-export const booksSchema = z.object({
-  query: querySchema,
-  body: bodyBook,
-});
-
-export type BodyBookSchema = z.infer<typeof bodyBook>;
+export type BookSchema = z.infer<typeof bookSchema>;

@@ -18,7 +18,9 @@ const verifyAndProtect = (req: Request, res: Response, next: NextFunction) => {
     const decoded: any = jwt.verify(bearerToken, config.TOKEN_KEY as string);
     req.token = decoded;
   } catch (err) {
-    return res.status(401).json({ message: "Unauthorized, invalid Token." });
+    return res
+      .status(401)
+      .json({ message: "Unauthorized, you need to login first." });
   }
 
   if (req.token.role === "user") {
@@ -45,7 +47,9 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const decoded: any = jwt.verify(bearerToken, config.TOKEN_KEY as string);
     req.token = decoded;
   } catch (err) {
-    return res.status(401).json({ message: "Unauthorized, invalid Token." });
+    return res
+      .status(401)
+      .json({ message: "Unauthorized, you need to login first." });
   }
 
   return next();

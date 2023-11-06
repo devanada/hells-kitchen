@@ -7,12 +7,13 @@ import {
   updateBookById,
   deleteBookById,
 } from "./books.model";
-import { booksSchema, bookRequest } from "./books.types";
+import { bookSchema } from "./books.types";
+import { nonBodySchema, bodySchema } from "../utils/types/type";
 import { zParse } from "../utils/zParse";
 
 export const getListBooks = async (req: Request, res: Response) => {
   try {
-    const { query } = await zParse(bookRequest, req);
+    const { query } = await zParse(nonBodySchema, req);
 
     const data = await getBooks(query);
     if (data) {
@@ -41,7 +42,7 @@ export const getDetailBook = async (req: Request, res: Response) => {
 
 export const createBook = async (req: Request, res: Response) => {
   try {
-    const { query, body } = await zParse(booksSchema, req);
+    const { query, body } = await zParse(bodySchema(bookSchema), req);
 
     if (query.overwrite === "true") {
       const data = await postBook(req, body);
@@ -59,7 +60,7 @@ export const createBook = async (req: Request, res: Response) => {
 
 export const updateBook = async (req: Request, res: Response) => {
   try {
-    const { query, body } = await zParse(booksSchema, req);
+    const { query, body } = await zParse(bodySchema(bookSchema), req);
 
     const isBookFound = await getBookById(req.params.id_book);
 
@@ -85,7 +86,7 @@ export const updateBook = async (req: Request, res: Response) => {
 
 export const deleteBook = async (req: Request, res: Response) => {
   try {
-    const { query } = await zParse(bookRequest, req);
+    const { query } = await zParse(nonBodySchema, req);
 
     const isBookFound = await getBookById(req.params.id_book);
 
