@@ -15,11 +15,11 @@ const router = express.Router();
 router
   .route("/books")
   .get(getListBooks)
-  .post(verifyAndProtect, upload.single("image"), createBook);
+  .post(verifyAndProtect, upload.single("cover_image"), createBook);
 router
   .route("/books/:id_book")
   .get(getDetailBook)
-  .put(verifyAndProtect, upload.single("image"), updateBook)
+  .put(verifyAndProtect, upload.single("cover_image"), updateBook)
   .delete(verifyAndProtect, deleteBook);
 
 export default router;

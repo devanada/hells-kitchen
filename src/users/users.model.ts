@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 
 import sequelize from "../utils/configs/database";
 import { UserUpdateSchema } from "./users.types";
-import Borrows from "../borrows/borrows.model";
 const cloudinary = require("../utils/configs/cloudinary");
 
 const Users = sequelize.define(
@@ -45,8 +44,6 @@ const Users = sequelize.define(
     timestamps: true,
   }
 );
-
-// Users.hasMany(Borrows);
 
 sequelize
   .sync()

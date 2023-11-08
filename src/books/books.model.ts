@@ -120,7 +120,7 @@ export const postBook = async (req: Request, body: BookSchema) => {
 };
 
 export const updateBookById = async (req: Request, body: BookSchema) => {
-  const { user_id } = req.token;
+  const { id_book } = req.params;
 
   let newBody: BookSchema = {
     ...body,
@@ -139,7 +139,7 @@ export const updateBookById = async (req: Request, body: BookSchema) => {
 
   const book = await Books.update(newBody, {
     where: {
-      id: user_id,
+      id: id_book,
       deletedAt: null,
     },
   });
