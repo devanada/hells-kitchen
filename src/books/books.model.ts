@@ -63,7 +63,7 @@ export const getBooks = async (req: QuerySchema) => {
     where = { ...where, title: { [Op.iLike]: `%${req.query}%` } };
   }
 
-  if (req.sort === "new") {
+  if (req.sort.toLowerCase() === "new") {
     order.push(["createdAt", "DESC"]);
   } else {
     order.push(["id", "ASC"]);

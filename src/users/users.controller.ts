@@ -6,8 +6,9 @@ import {
   deleteUserByIdToken,
 } from "./users.model";
 
+import { userSchema } from "./users.types";
+import { nonBodySchema, bodySchema } from "../utils/types/type";
 import { zParse } from "../utils/zParse";
-import { userDeleteSchema, userUpdateSchema } from "./users.types";
 
 export const userGet = async (req: Request, res: Response) => {
   try {
@@ -24,7 +25,7 @@ export const userGet = async (req: Request, res: Response) => {
 
 export const userUpdate = async (req: Request, res: Response) => {
   try {
-    const { query, body } = await zParse(userUpdateSchema, req);
+    const { query, body } = await zParse(bodySchema(userSchema), req);
 
     if (query.overwrite === "true") {
       const data = await updateUserByIdToken(req, body);
@@ -44,7 +45,7 @@ export const userUpdate = async (req: Request, res: Response) => {
 
 export const userDelete = async (req: Request, res: Response) => {
   try {
-    const { query } = await zParse(userDeleteSchema, req);
+    const { query } = await zParse(nonBodySchema, req);
 
     if (query.overwrite === "true") {
       const data = await deleteUserByIdToken(req);

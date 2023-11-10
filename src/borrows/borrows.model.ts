@@ -55,7 +55,7 @@ export const getBorrows = async (req: Request, query: QuerySchema) => {
   let order: Order = [];
   let where: WhereOptions<any> = {};
   let include: Includeable[] = [
-    { model: Books, as: "book", attributes: ["id", "title"] },
+    { model: Books, as: "book", attributes: ["id", "title", "cover_image"] },
   ];
 
   if (query.query) {

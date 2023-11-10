@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-import { querySchema } from "../utils/types/type";
-
-export const userUpdateBody = z.object({
+export const userSchema = z.object({
   full_name: z.string({
     required_error: "Full name is required",
   }),
@@ -23,13 +21,4 @@ export const userUpdateBody = z.object({
   profile_picture: z.string().optional(),
 });
 
-export const userUpdateSchema = z.object({
-  query: querySchema,
-  body: userUpdateBody,
-});
-
-export const userDeleteSchema = z.object({
-  query: querySchema,
-});
-
-export type UserUpdateSchema = z.infer<typeof userUpdateBody>;
+export type UserUpdateSchema = z.infer<typeof userSchema>;
