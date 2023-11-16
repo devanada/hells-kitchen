@@ -8,8 +8,18 @@ const router = express.Router();
 
 router
   .route("/users")
-  .get(verifyToken, userGet)
-  .put(verifyToken, upload.single("profile_picture"), userUpdate)
-  .delete(verifyToken, userDelete);
+  .get(
+    (req, res, next) => verifyToken(req, res, next, ["user", "admin"]),
+    userGet
+  )
+  .put(
+    (req, res, next) => verifyToken(req, res, next, ["user", "admin"]),
+    upload.single("profile_picture"),
+    userUpdate
+  )
+  .delete(
+    (req, res, next) => verifyToken(req, res, next, ["user", "admin"]),
+    userDelete
+  );
 
 export default router;

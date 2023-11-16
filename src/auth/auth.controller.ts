@@ -17,13 +17,13 @@ export const userSignup = async (req: Request, res: Response) => {
       });
     }
 
-    if (query.overwrite === "true") {
-      if (oldUser) {
-        return res
-          .status(409)
-          .json({ message: "User already exist, please login." });
-      }
+    if (oldUser) {
+      return res
+        .status(409)
+        .json({ message: "User already exist, please login." });
+    }
 
+    if (query.overwrite === "true") {
       await regisUser(body);
     }
 
